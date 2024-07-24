@@ -1,0 +1,10 @@
+SELECT setval('album_album_id_seq', (SELECT max(album_id)+1 FROM chinook.album));
+SELECT setval('artist_artist_id_seq', (SELECT max(artist_id)+1 FROM chinook.artist));
+SELECT setval('customer_customer_id_seq', (SELECT max(customer_id)+1 FROM chinook.customer));
+SELECT setval('employee_employee_id_seq', (SELECT max(employee_id)+1 FROM chinook.employee));
+SELECT setval('genre_genre_id_seq', (SELECT max(genre_id)+1 FROM genre));
+SELECT setval('invoice_invoice_id_seq', (SELECT max(invoice_id)+1 FROM invoice));
+SELECT setval('invoice_line_invoice_line_id_seq', (SELECT max(invoice_line_id)+1 FROM invoice_line));
+SELECT setval('media_type_media_type_id_seq', (SELECT max(media_type_id)+1 FROM media_type));
+SELECT setval('playlist_playlist_id_seq', (SELECT max(playlist_id)+1 FROM playlist));
+SELECT setval('track_track_id_seq', (SELECT max(track_id)+1 FROM track));
