@@ -1,21 +1,28 @@
-import {ActionFunctionArgs, json, LoaderFunctionArgs, redirect} from '@remix-run/node'
-import {customer_viewInChinook, customerInChinook, invoice_lineInChinook, invoiceInChinook,} from '../../drizzle/schema'
+import {Button, Stack, Text} from '@mantine/core'
+import {ActionFunctionArgs, json, LoaderFunctionArgs, redirect,} from '@remix-run/node'
+import {Form, useLoaderData} from '@remix-run/react'
 import {eq, inArray} from 'drizzle-orm'
+import {InvoiceTable} from '~/components/InvoiceTable'
 import {db} from '~/db.server'
-import {Form, useLoaderData} from '@remix-run/react';
-import {Button} from '@mantine/core';
+import {
+  customer_viewInChinook,
+  customerInChinook,
+  invoice_lineInChinook,
+  invoice_viewInChinook,
+  invoiceInChinook,
+} from '../../drizzle/schema'
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   if (params.id === undefined) {
     return new Response('Missing id', { status: 400 })
   }
-  const customer = await db.query.customerInChinook.findFirst({
-    where: eq(customerInChinook.customer_id, parseInt(params.id)),
-    with: {
-      invoiceInChinooks: true,
-    }
+  const customer = await db.query.customer_viewInChinook.findFirst({
+    where: eq(customer_viewInChinook.customer_id, parseInt(params.id)),
   })
-  return json({ customer })
+  const invoices = await db.query.invoice_viewInChinook.findMany({
+    where: eq(invoice_viewInChinook.customer_id, parseInt(params.id)),
+  })
+  return json({ customer, invoices })
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -34,7 +41,9 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
           invoices.map((i) => i.invoice_id),
         ),
       )
-      await tx.delete(invoiceInChinook).where(eq(invoiceInChinook.customer_id, customerId))
+      await tx
+        .delete(invoiceInChinook)
+        .where(eq(invoiceInChinook.customer_id, customerId))
       await tx
         .delete(customerInChinook)
         .where(eq(customerInChinook.customer_id, customerId))
@@ -44,15 +53,28 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 }
 
 export default function CustomerDelete() {
-  const { customer } = useLoaderData<typeof loader>()
+  const { customer, invoices } = useLoaderData<typeof loader>()
   return (
     <div>
       <h1>Delete Customer</h1>
-      <p>Are you sure you want to delete {customer.customer_name}?</p>
-      {JSON.stringify(customer, null, 2)}
-      <Form method="delete">
-        <Button type="submit">Delete</Button>
-      </Form>
+      <p>
+        Are you sure you want to delete{' '}
+        <Text fw={700} ta={'center'}>
+          {customer.customer_name}&nbsp;?
+        </Text>
+      </p>
+      <p>This would also delete the customer's invoices.</p>
+      <Stack>
+        <Form method="delete">
+          <Button type="submit" color={'red'}>
+            Delete
+          </Button>
+        </Form>
+        <InvoiceTable
+          invoices={invoices}
+          initialState={{ pagination: { pageSize: 5, pageIndex: 0 }, sorting: [{id: 'invoice_date', desc: true}] }}
+        />
+      </Stack>
     </div>
   )
 }

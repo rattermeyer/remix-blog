@@ -127,6 +127,7 @@ export default function CustomersEdit() {
                 label={'First Name'}
                 {...register('first_name')}
                 error={errors.first_name?.message}
+                disabled
               />
               <TextInput
                 placeholder="Last Name"
@@ -155,14 +156,14 @@ export default function CustomersEdit() {
                 error={errors.fax?.message}
               />
             </Group>
-
-            <Fieldset legend="Company Address">
-              <TextInput
+            <TextInput
                 placeholder="Company"
                 label="Company"
                 {...register('company')}
                 error={errors.company?.message}
-              />
+            />
+
+            <Fieldset legend="Address">
               <TextInput
                 placeholder="Address"
                 label="Address"

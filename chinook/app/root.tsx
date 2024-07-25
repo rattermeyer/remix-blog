@@ -3,11 +3,19 @@ import '@mantine/dates/styles.css' //if using mantine date picker features
 import 'mantine-react-table/styles.css' //make sure MRT styles were imported in your app root (once)
 import '@mantine/notifications/styles.css';
 import {AppShell, Burger, ColorSchemeScript, Flex, List, MantineProvider,} from '@mantine/core'
-import {Link, Links, Meta, Outlet, Scripts, ScrollRestoration,} from '@remix-run/react'
-import {theme} from '~/theme'
 import {useDisclosure} from '@mantine/hooks'
-import {ColorSchemeToggle} from '~/components/ColorSchemeToggle';
 import {Notifications} from '@mantine/notifications';
+import {MetaFunction} from '@remix-run/node';
+import {Link, Links, Meta, Outlet, Scripts, ScrollRestoration, useRouteError,} from '@remix-run/react'
+import {ColorSchemeToggle} from '~/components/ColorSchemeToggle';
+import {theme} from '~/theme'
+
+export const meta: MetaFunction = () => {
+  return [
+    { title: 'Chinook / Remix demo app' },
+    { name: 'description', content: 'A demo app to showcase remix and some other libraries' },
+  ]
+}
 
 export function Layout() {
   const [opened, { toggle }] = useDisclosure()
@@ -18,11 +26,11 @@ export function Layout() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
-        <ColorSchemeScript />
+        <ColorSchemeScript /> {/* for mantine */}
       </head>
       <body>
         <MantineProvider theme={theme}>
-          <Notifications position={'top-right'} />
+          <Notifications position={'top-right'} /> {/* for mantine */}
           <AppShell
             header={{ height: 60 }}
             navbar={{
@@ -74,6 +82,11 @@ export function Layout() {
               <h2>Docs</h2>
               <List>
                 <List.Item>
+                  <Link to={'https://github.com/lerocha/chinook-database'}>
+                    Chinook Database (data source)
+                  </Link>
+                </List.Item>
+                <List.Item>
                   <Link to={'https://remix.run/docs/en/main'}>Remix Docs</Link>
                 </List.Item>
                 <List.Item>
@@ -102,9 +115,9 @@ export function Layout() {
                 </List.Item>
                 <List.Item>
                   <Link to={'https://www.typescriptlang.org'}>Typescript</Link>
-                  <List.Item>
-                    <Link to={'https://www.typescriptlang.org/docs/handbook/variable-declarations.html#destructuring'}>Destructuring</Link>
-                  </List.Item>
+                </List.Item>
+                <List.Item>
+                  <Link to={'https://www.typescriptlang.org/docs/handbook/variable-declarations.html#destructuring'}>Destructuring</Link>
                 </List.Item>
               </List>
             </AppShell.Navbar>
@@ -122,4 +135,22 @@ export function Layout() {
 
 export default function App() {
   return <Layout />
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+  console.error(error);
+  return (
+      <html>
+      <head>
+        <title>Oh no!</title>
+        <Meta />
+        <Links />
+      </head>
+      <body>
+      {/* add the UI you want your users to see */}
+      <Scripts />
+      </body>
+      </html>
+  );
 }
