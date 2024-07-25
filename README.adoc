@@ -1,0 +1,49 @@
+= README
+
+:github: https://github.com/opitzconsulting/remix-blog
+:blog: https://thecattlecrew.net
+
+This repository contains the source code for the blog post {blog}["Remix—Ein leichtgewichtiger Ansatz für Geschäftsanwendungen"].
+
+== Prerequisites
+
+* Docker
+* Node.js (>= 20)
+* yarn
+
+== Getting Started development
+
+After cloning the project, start the postgres container using docker
+
+[source, bash]
+----
+docker compose up -d
+----
+
+Then install the dependencies and start the application
+
+[source, bash]
+----
+yarn install
+yarn dev
+----
+
+The application is now available at http://localhost:5173.
+
+== Show me the app
+
+If you only want to see the app, you can use the following command to start the app in a docker container.
+
+[source, bash]
+----
+docker compose up -d
+----
+
+The application is available at http://localhost:8080
+
+
+
+
+
+
+
