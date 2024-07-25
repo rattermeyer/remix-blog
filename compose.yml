@@ -22,3 +22,20 @@ services:
     ports:
       - "3000:3000"
     network_mode: host
+  kroki:
+    profiles:
+      - doc
+    image: yuzutech/kroki:0.24.1
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mermaid
+    environment:
+      - KROKI_MERMAID_HOST=mermaid
+      - KROKI_SAFE_MODE=UNSAFE
+  mermaid:
+    profiles:
+      - doc
+    image: yuzutech/kroki-mermaid:0.24.1
+    expose:
+      - "8002"

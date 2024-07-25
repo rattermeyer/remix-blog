@@ -38,6 +38,7 @@
 		"zod": "^3.23.8"
 	},
 	"devDependencies": {
+		"@antora/lunr-extension": "^1.0.0-alpha.8",
 		"@biomejs/biome": "1.8.3",
 		"@playwright/test": "^1.45.3",
 		"@remix-run/dev": "^2.10.3",
@@ -52,6 +53,8 @@
 		"@types/react-dom": "^18.2.7",
 		"@typescript-eslint/eslint-plugin": "^6.7.4",
 		"@typescript-eslint/parser": "^6.7.4",
+		"antora": "3.1.9",
+		"asciidoctor-kroki": "^0.18.1",
 		"autoprefixer": "^10.4.19",
 		"drizzle-kit": "^0.22.8",
 		"eslint": "^8.38.0",
