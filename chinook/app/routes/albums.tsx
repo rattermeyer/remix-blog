@@ -1,11 +1,15 @@
-import {json, type LoaderFunctionArgs} from "@remix-run/node";
-import {useLoaderData} from "@remix-run/react";
-import {createSelectSchema} from "drizzle-zod";
-import {MantineReactTable, type MRT_ColumnDef, useMantineReactTable,} from "mantine-react-table";
-import {useMemo} from "react";
-import type {z} from "zod";
-import {db} from "~/db.server";
-import {album_viewInChinook} from "../../drizzle/schema";
+import { type LoaderFunctionArgs, json } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
+import { createSelectSchema } from "drizzle-zod";
+import {
+	type MRT_ColumnDef,
+	MantineReactTable,
+	useMantineReactTable,
+} from "mantine-react-table";
+import { useMemo } from "react";
+import type { z } from "zod";
+import { db } from "~/db.server";
+import { album_viewInChinook } from "../../drizzle/schema";
 
 const AlbumViewSchema = createSelectSchema(album_viewInChinook);
 type AlbumView = z.infer<typeof AlbumViewSchema>;
@@ -22,7 +26,7 @@ export default function Albums() {
 			{
 				accessorKey: "title",
 				header: "Title",
-				enableGrouping: false
+				enableGrouping: false,
 			},
 			{
 				accessorKey: "artist",
@@ -32,13 +36,13 @@ export default function Albums() {
 			{
 				accessorKey: "number_of_tracks",
 				header: "Number of Tracks",
-				enableGrouping: false
+				enableGrouping: false,
 			},
 			{
 				accessorFn: (album) =>
 					`${Math.floor((album.length_milliseconds || 0) / 1000 / 60)}`,
 				header: "Length in Minutes",
-				enableGrouping: false
+				enableGrouping: false,
 			},
 		],
 		[],
