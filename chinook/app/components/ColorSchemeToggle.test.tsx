@@ -5,20 +5,18 @@ import { useMantineColorScheme } from "@mantine/core";
 import { ColorSchemeToggle } from "./ColorSchemeToggle";
 
 // Mock useMantineColorScheme
+const setColorScheme = vi.fn();
 vi.mock("@mantine/core", async (importOriginal) => {
 	const actual = await importOriginal();
-	const useMantineColorScheme = vi.fn();
+	const useMantineColorScheme = vi
+		.fn()
+		.mockImplementation(() => ({ setColorScheme }));
 	// @ts-ignore
 	return { ...actual, useMantineColorScheme };
 });
 
 describe("ColorSchemeToggle", () => {
 	it("toggles color scheme correctly", () => {
-		const setColorScheme = vi.fn();
-		useMantineColorScheme.mockImplementation(() => ({
-			setColorScheme,
-		}));
-
 		render(<ColorSchemeToggle />);
 
 		const lightButton = screen.getByRole("button", { name: "Light" });

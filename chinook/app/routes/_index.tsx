@@ -15,11 +15,6 @@ export default function Index() {
 			<h1 className="text-3xl">Welcome to Remix</h1>
 			<List>
 				<List.Item>
-					<Link to={"/customers"} prefetch={"intent"}>
-						Customers
-					</Link>{" "}
-				</List.Item>
-				<List.Item>
 					<Link to={"/albums"} prefetch={"intent"}>
 						Albums
 					</Link>

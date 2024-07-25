@@ -105,6 +105,9 @@ export function Layout() {
 									</Link>
 								</List.Item>
 								<List.Item>
+									<Link to={"https://yarnpkg.com"}>Yarn</Link>
+								</List.Item>
+								<List.Item>
 									<Link to={"https://remix.run/docs/en/main"}>Remix Docs</Link>
 								</List.Item>
 								<List.Item>
@@ -137,15 +140,20 @@ export function Layout() {
 								</List.Item>
 								<List.Item>
 									<Link to={"https://www.typescriptlang.org"}>Typescript</Link>
+									<List withPadding={true}>
+										<List.Item>
+											<Link
+												to={
+													"https://www.typescriptlang.org/docs/handbook/variable-declarations.html#destructuring"
+												}
+											>
+												Destructuring
+											</Link>
+										</List.Item>
+									</List>
 								</List.Item>
 								<List.Item>
-									<Link
-										to={
-											"https://www.typescriptlang.org/docs/handbook/variable-declarations.html#destructuring"
-										}
-									>
-										Destructuring
-									</Link>
+									<Link to={"https://biomejs.dev"}>Biome</Link>
 								</List.Item>
 							</List>
 						</AppShell.Navbar>
