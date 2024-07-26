@@ -21,7 +21,7 @@ asciidoc:
     - asciidoctor-kroki
 
   attributes:
-    kroki-server-url: https://localhost:8000
+    kroki-server-url: http://localhost:8000
     kroki-fetch-diagram: true
 
 ui:
