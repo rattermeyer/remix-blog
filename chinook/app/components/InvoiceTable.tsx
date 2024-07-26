@@ -9,8 +9,8 @@ import {
 	useMantineReactTable,
 } from "mantine-react-table";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { Invoice } from "~/models/invoices-model";
-import {useTranslation} from 'react-i18next';
 
 type InvoicesTableProps = {
 	invoices: Invoice[];
@@ -29,7 +29,7 @@ export const InvoiceTable = ({
 		() => [
 			{
 				accessorKey: "invoice_date",
-				header: t("invoice.date","Invoice Date"),
+				header: t("invoice.date", "Invoice Date"),
 				Cell: ({ cell }) => {
 					const date = cell.getValue<string>();
 					const formattedDate = dayjs(date).calendar();

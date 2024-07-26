@@ -1,5 +1,5 @@
 {
-  "invoice": {
-    "date": "Rechnungsdatum"
-  }
+	"invoice": {
+		"date": "Rechnungsdatum"
+	}
 }

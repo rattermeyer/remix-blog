@@ -75,7 +75,7 @@ export default function Customers() {
 		),
 		renderTopToolbarCustomActions: ({ table }) => {
 			return (
-				<Button component={Link} to={'/customers/create'}>
+				<Button component={Link} to={"/customers/create"}>
 					Create Customer
 				</Button>
 			);
