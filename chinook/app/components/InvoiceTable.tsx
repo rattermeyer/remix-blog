@@ -10,6 +10,7 @@ import {
 } from "mantine-react-table";
 import { useEffect, useMemo, useState } from "react";
 import type { Invoice } from "~/models/invoices-model";
+import {useTranslation} from 'react-i18next';
 
 type InvoicesTableProps = {
 	invoices: Invoice[];
@@ -21,13 +22,14 @@ export const InvoiceTable = ({
 	invoices,
 	initialState,
 }: InvoicesTableProps) => {
+	const { t } = useTranslation();
 	const [enableGrouping, setEnableGrouping] = useState<boolean>(false);
 	const navigate = useNavigate();
 	const columns = useMemo<MRT_ColumnDef<Invoice>[]>(
 		() => [
 			{
 				accessorKey: "invoice_date",
-				header: "Invoice Date",
+				header: t("invoice.date","Invoice Date"),
 				Cell: ({ cell }) => {
 					const date = cell.getValue<string>();
 					const formattedDate = dayjs(date).calendar();
@@ -64,7 +66,7 @@ export const InvoiceTable = ({
 				),
 			},
 		],
-		[],
+		[t],
 	);
 	const table = useMantineReactTable({
 		columns,

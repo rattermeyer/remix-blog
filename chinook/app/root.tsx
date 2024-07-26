@@ -12,18 +12,22 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Notifications } from "@mantine/notifications";
-import type { MetaFunction } from "@remix-run/node";
+import {json, type LoaderFunctionArgs, type MetaFunction} from "@remix-run/node";
 import {
 	Link,
 	Links,
 	Meta,
 	Outlet,
 	Scripts,
-	ScrollRestoration,
+	ScrollRestoration, useLoaderData,
 	useRouteError,
 } from "@remix-run/react";
 import { ColorSchemeToggle } from "~/components/ColorSchemeToggle";
 import { theme } from "~/theme";
+import i18next from '~/i18next.server';
+import {useTranslation} from 'react-i18next';
+import { useChangeLanguage } from "remix-i18next/react";
+
 
 export const meta: MetaFunction = () => {
 	return [
@@ -35,16 +39,31 @@ export const meta: MetaFunction = () => {
 	];
 };
 
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+	const locale = await i18next.getLocale(request);
+	return json({ locale });
+}
+
 export function Layout() {
+	const { locale } = useLoaderData<typeof loader>();
+	const { i18n } = useTranslation();
 	const [opened, { toggle }] = useDisclosure();
+
+	// This hook will change the i18n instance language to the current locale
+	// detected by the loader, this way, when we do something to change the
+	// language, this locale will change and i18next will load the correct
+	// translation files
+	useChangeLanguage(locale);
+
 	return (
-		<html lang="en">
+		<html lang={locale} dir={i18n.dir()}>
 			<head>
+				<title>Remix Demo App</title>
 				<meta charSet="utf-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 				<Meta />
 				<Links />
-				<ColorSchemeScript /> {/* for mantine */}
+				<ColorSchemeScript />
 			</head>
 			<body>
 				<MantineProvider theme={theme}>
