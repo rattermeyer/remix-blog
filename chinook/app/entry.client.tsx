@@ -33,19 +33,9 @@ async function hydrate() {
     startTransition(() => {
         hydrateRoot(
             document,
-            <I18nextProvider i18n={i18next}>
-                <StrictMode>
-                    <RemixBrowser/>
-                </StrictMode>
-            </I18nextProvider>,
+            <StrictMode>
+                <RemixBrowser/>
+            </StrictMode>
         );
     });
-}
-
-if (window.requestIdleCallback) {
-    window.requestIdleCallback(hydrate);
-} else {
-    // Safari doesn't support requestIdleCallback
-    // https://caniuse.com/requestidlecallback
-    window.setTimeout(hydrate, 1);
 }

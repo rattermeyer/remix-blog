@@ -27,7 +27,7 @@ services:
   kroki:
     profiles:
       - doc
-    image: yuzutech/kroki:0.24.1
+    image: yuzutech/kroki:0.25.0
     ports:
       - "8000:8000"
     depends_on:

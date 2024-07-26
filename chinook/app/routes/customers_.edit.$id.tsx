@@ -147,7 +147,6 @@ export default function CustomersEdit() {
 								label={"First Name"}
 								{...register("first_name")}
 								error={errors.first_name?.message}
-								disabled
 							/>
 							<TextInput
 								placeholder="Last Name"

@@ -6,13 +6,23 @@ import {AppShell, Burger, ColorSchemeScript, Flex, List, MantineProvider,} from 
 import {useDisclosure} from "@mantine/hooks";
 import {Notifications} from "@mantine/notifications";
 import {json, type LoaderFunctionArgs, type MetaFunction} from "@remix-run/node";
-import {Link, Links, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData, useRouteError,} from "@remix-run/react";
+import {
+    isRouteErrorResponse,
+    Link,
+    Links,
+    Meta,
+    Outlet,
+    Scripts,
+    ScrollRestoration,
+    useLoaderData,
+    useRouteError,
+    useRouteLoaderData,
+} from "@remix-run/react";
 import {ColorSchemeToggle} from "~/components/ColorSchemeToggle";
 import {theme} from "~/theme";
 import i18next from '~/i18next.server';
 import {useTranslation} from 'react-i18next';
 import {useChangeLanguage} from "remix-i18next/react";
-
 
 export const meta: MetaFunction = () => {
     return [
@@ -26,14 +36,14 @@ export const meta: MetaFunction = () => {
 
 export const loader = async ({request}: LoaderFunctionArgs) => {
     const locale = await i18next.getLocale(request) || "en";
-    console.log("locale", locale);
     return json({locale});
 }
 
 export function Layout() {
-    const {locale} = {...useLoaderData<typeof loader>()};
+    const {locale="en"} = {...useRouteLoaderData<typeof loader>("root")};
     const {i18n} = useTranslation();
     const [opened, {toggle}] = useDisclosure();
+    const error = useRouteError();
 
     // This hook will change the i18n instance language to the current locale
     // detected by the loader, this way, when we do something to change the
@@ -163,7 +173,7 @@ export function Layout() {
                     </List>
                 </AppShell.Navbar>
                 <AppShell.Main>
-                    <Outlet/>
+                    {error ? (<ErrorBoundary/>) : (<Outlet/>)}
                 </AppShell.Main>
             </AppShell>
         </MantineProvider>
@@ -180,17 +190,26 @@ export default function App() {
 
 export function ErrorBoundary() {
     const error = useRouteError();
-    return (
-        <html lang={"en"}>
-        <head>
-            <title>Oh no!</title>
-            <Meta/>
-            <Links/>
-        </head>
-        <body>
-        {/* add the UI you want your users to see */}
-        <Scripts/>
-        </body>
-        </html>
-    );
+
+    if (isRouteErrorResponse(error)) {
+        return (
+            <div>
+                <h1>
+                    Error {error.status} {error.statusText}
+                </h1>
+                <p>{error.data}</p>
+            </div>
+        );
+    } else if (error instanceof Error) {
+        return (
+            <div>
+                <h1>Error</h1>
+                <p>{error.message}</p>
+                <p>The stack trace is:</p>
+                <pre>{error.stack}</pre>
+            </div>
+        );
+    } else {
+        return <h1>Unknown Error</h1>;
+    }
 }
