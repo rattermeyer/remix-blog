@@ -73,7 +73,7 @@ export function Layout() {
 				<ColorSchemeScript />
 			</head>
 			<body>
-				<MantineProvider theme={theme}>
+				<MantineProvider theme={theme} >
 					<Notifications position={"top-right"} /> {/* for mantine */}
 					<AppShell
 						header={{ height: 60 }}

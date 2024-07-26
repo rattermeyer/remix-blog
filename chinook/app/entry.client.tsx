@@ -8,8 +8,8 @@ import LanguageDetector from "i18next-browser-languagedetector";
 import Backend from "i18next-http-backend";
 import {getInitialNamespaces} from "remix-i18next/client";
 
-async function hydrate() {
-    await i18next
+function hydrate() {
+    i18next
         .use(initReactI18next) // Tell i18next to use the react-i18next plugin
         .use(LanguageDetector) // Setup a client-side language detector
         .use(Backend) // Setup your backend
@@ -38,4 +38,12 @@ async function hydrate() {
             </StrictMode>
         );
     });
+}
+
+if (window.requestIdleCallback) {
+    window.requestIdleCallback(hydrate);
+} else {
+    // Safari doesn't support requestIdleCallback
+    // https://caniuse.com/requestidlecallback
+    window.setTimeout(hydrate, 1);
 }

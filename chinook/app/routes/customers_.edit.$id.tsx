@@ -59,18 +59,21 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 	if (errors) {
 		return json({ errors, defaultValues });
 	}
-	const result = await db.query.sales_agent_viewInChinook.findFirst({
-		where: eq(
-			sales_agent_viewInChinook.employee_id,
-			data.support_rep_id ? data.support_rep_id : 0,
-		),
-	});
-	if (result === undefined) {
-		return json({
-			message: "Invalid request",
-			status: "error",
-			title: "Invalid Request",
-		} as Notification);
+	if (data.support_rep_id !== null) {
+		const result = await db.query.sales_agent_viewInChinook.findFirst({
+			where: eq(
+				sales_agent_viewInChinook.employee_id,
+				data.support_rep_id ? data.support_rep_id : 0,
+			),
+		});
+		if (result === undefined) {
+			const notification: Notification = {
+				message: "Invalid request",
+				status: "error",
+				title: "Invalid Request",
+			};
+			return json({notification});
+		}
 	}
 	const updatedCustomers = await db
 		.update(customerInChinook)
