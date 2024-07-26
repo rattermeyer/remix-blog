@@ -6,7 +6,7 @@ import {
 	MantineReactTable,
 	useMantineReactTable,
 } from "mantine-react-table";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { z } from "zod";
 import { db } from "~/db.server";
 import { album_viewInChinook } from "../../drizzle/schema";
@@ -20,6 +20,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 export default function Albums() {
+	const [showGlobalFilter, setShowGlobalFilter] = useState<boolean>(false);
+	const [enableGrouping, setEnableGrouping] = useState<boolean>(false);
 	const { albums } = useLoaderData<typeof loader>();
 	const columns = useMemo<MRT_ColumnDef<AlbumView>[]>(
 		() => [
@@ -50,8 +52,19 @@ export default function Albums() {
 	const table = useMantineReactTable({
 		columns,
 		data: albums,
-		enableGrouping: true,
+		enableGlobalFilter: true,
+		enableGrouping: enableGrouping,
+		state: {
+			showGlobalFilter: showGlobalFilter,
+		},
 	});
+	useEffect(() => {
+		// we need to put this into a useEffect, otherwise React complains about not mounted components
+		// might be because of SSR
+		setShowGlobalFilter(true);
+		setEnableGrouping(true);
+	}, []);
+
 	return (
 		<>
 			<h1>Albums</h1>

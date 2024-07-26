@@ -25,7 +25,7 @@ export default function Invoices() {
 	return (
 		<>
 			<h1>Invoices</h1>
-			<ClientOnly>{() => <InvoiceTable invoices={invoices} />}</ClientOnly>
+			<InvoiceTable invoices={invoices} />
 		</>
 	);
 }

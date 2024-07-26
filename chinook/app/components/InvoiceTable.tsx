@@ -1,4 +1,4 @@
-import { Box, Button, Text } from "@mantine/core";
+import { Box, Button, NumberFormatter, Text } from "@mantine/core";
 import { useNavigate } from "@remix-run/react";
 import dayjs from "dayjs";
 import calendar from "dayjs/plugin/calendar";
@@ -8,7 +8,7 @@ import {
 	MantineReactTable,
 	useMantineReactTable,
 } from "mantine-react-table";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Invoice } from "~/models/invoices-model";
 
 type InvoicesTableProps = {
@@ -21,6 +21,7 @@ export const InvoiceTable = ({
 	invoices,
 	initialState,
 }: InvoicesTableProps) => {
+	const [enableGrouping, setEnableGrouping] = useState<boolean>(false);
 	const navigate = useNavigate();
 	const columns = useMemo<MRT_ColumnDef<Invoice>[]>(
 		() => [
@@ -33,10 +34,12 @@ export const InvoiceTable = ({
 					return <>{formattedDate}</>;
 				},
 				enableColumnFilter: false,
+				enableGrouping: false,
 			},
 			{
 				accessorKey: "customer_name",
 				header: "Customer Name",
+				enableGrouping: true,
 			},
 			{
 				accessorKey: "total",
@@ -46,6 +49,19 @@ export const InvoiceTable = ({
 						style: "currency",
 						currency: "USD",
 					}),
+				enableGrouping: false,
+				aggregationFn: (columnId, leafRows, childRows) => {
+					return leafRows.reduce(
+						(sum, row) => sum + Number.parseFloat(row.original.total || "0"),
+						0,
+					);
+				},
+				AggregatedCell: ({ cell }) => (
+					<div>
+						Total:{" "}
+						<NumberFormatter value={cell.getValue<number>()} decimalScale={2} />
+					</div>
+				),
 			},
 		],
 		[],
@@ -53,6 +69,9 @@ export const InvoiceTable = ({
 	const table = useMantineReactTable({
 		columns,
 		data: invoices,
+		enableColumnFilterModes: true,
+		enableFacetedValues: true,
+		enableGrouping: enableGrouping,
 		renderDetailPanel: ({ row }) => (
 			<Box
 				style={{
@@ -82,6 +101,8 @@ export const InvoiceTable = ({
 		},
 		initialState: initialState ? initialState : undefined,
 	});
-
+	useEffect(() => {
+		setEnableGrouping(true);
+	}, []);
 	return <MantineReactTable table={table} />;
 };
