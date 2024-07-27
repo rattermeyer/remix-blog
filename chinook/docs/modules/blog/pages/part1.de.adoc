@@ -180,5 +180,18 @@ Da sind wir ganz bei Ryan Florence https://github.com/remix-run/remix/discussion
 Hier empfehle ich https://youtu.be/bfLFHp7Sbkg?si=T6ROk_sOkch_J8We[CDN Caching, SSG, and SSR] von ihm.
 Und was er erzählt ist nicht nur relevant für CDN Caching, sondern für jede Art von Reverse Proxy vor dem eigentlichen Server, d.h. auch wenn wir etwa einen Caddy Server oder einen Nginx Server vor unserem Node.js Server haben.
 
+Bisher haben wir eine reine React Fullstack Anwendung gesehen.
+Was wir aber häufig antreffen, ist eine Aufteilung: Für alle UI relevanten Aspekte wird Remix verwendet, für Integration mit Fremdsystemen und komplexe Business Logik ein Java Backend.
+Die Integration mit Umsystemen soll ja auch möglichst asynchron erfolgen, ggf. werden sie gecacht.
+Die Beantwortung einer UI Integration sollte dann möglichst innerhalb des eigenen Systems erfolgen.
+
+Daher ist eine Architektur wie folgt anzutreffen:
+
+.Komplexere Remix / Spring Architektur
+[plantuml,complex-remix-spring,svg]
+----
+include::example$complex-remix-spring.puml[]
+----
+
 Das wäre es für diesen Post.
-In den folgenden Posts schauen wir uns an, wie sich Remix anfühlt.
+In den folgenden Posts schauen wir uns an, wie sich Remix anfühlt, wenn wir damit entwickelt und einen einfachen CRUD use case umsetzen.

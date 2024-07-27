@@ -23,7 +23,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export default function Customers() {
 	const { customers } = useLoaderData<typeof loader>();
-	const navigate = useNavigate();
 	const columns = useMemo<MRT_ColumnDef<Customer>[]>(
 		() => [
 			{
