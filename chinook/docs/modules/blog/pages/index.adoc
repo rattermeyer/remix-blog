@@ -1,5 +1,10 @@
 = Blog Posts
 
-* Remix eine Alternative für Geschäftsanwendungen
-* List, routing, react-router, drizzle (vs prisma),
-* Create, zod, remix-hook-form
+* Remix eine Alternative für Geschäftsanwendungen (done)
+* List, routing, react-router, drizzle (vs prisma), Error Boundary,
+* Create, zod, remix-hook-form,
+* Edit, remix-testing, testing
+* invoices, remix-i18n, missing translations endpoint
+* remix-auth, login, logout, sessions, session storage
+* accessing backend service from remix (using oauth2)
+* E2E Testing using playwright

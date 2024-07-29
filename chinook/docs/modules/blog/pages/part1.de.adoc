@@ -1,25 +1,19 @@
 = Remix eine Alternative für Geschäftsanwendungen
 
-In diesem Blog will ich dir Remix als eine Alternative zur Entwicklung von Geschäftsanwendungen vorstellen.
+In diesem Blog möchte ich euch Remix als eine vielversprechende Alternative zur Entwicklung von Geschäftsanwendungen vorstellen.
+
+== Rückblick auf die Vergangenheit
 Vor 10-15 Jahren noch war es üblich Geschäftsanwendungen mittels Server-seitigem Rendering zu entwickeln.
-Das war die Zeit der klassischen Frameworks, wie PHP, Ruby on Rails, ASP.NET oder Java Server Faces.
+Frameworks wie PHP, Ruby on Rails, ASP.NET oder Java Server Faces dominierten diese Ära.
 Die Anwendungen wurden auf dem Server gerendert und als HTML an den Browser ausgeliefert.
-Allerdings scheuten viele Entwickler die Komplexität von JavaScript und die damit verbundenen Probleme.
-Die Browser waren damals noch nicht so standardisiert und performant wie heute.
-Wobei man auch heute noch streiten kann, ob die Browser wirklich standardisiert sind.
-Aber damals war es noch schlimmer.
 
-Allerdings hatten diese Anwendungen gegenüber klassischen Desktop Anwendungen, die sie ablösen sollten, einen entscheidenden Nachteil.
-Sie waren nicht so responsiv und interaktiv, wie klassische Desktop Anwendungen.
-Das lag daran, dass die Anwendungen immer wieder den Server kontaktieren mussten, um Daten zu laden oder zu speichern.
+JavaScript war damals nicht sehr populär, da Browser noch nicht so standardisiert und performant wie heute waren.
 
-Mit der Einführung von AJAX und später Single Page Applications (SPA) hat sich das geändert.
-Die Anwendungen wurden interaktiver und responsiver.
-Die Welt drehte sich komplett in Richtung Single Page Applications.
+Allerdings hatten diese serverseitig gerenderten Anwendungen gegenüber klassischen Desktop-Anwendungen, die sie ablösen sollten, einen entscheidenden Nachteil: Sie waren nicht so responsiv und interaktiv. Der ständige Austausch mit dem Server führte zu einer langsamen Benutzererfahrung.
 
-Die Kommunikation mit dem Server erfolgte über HTTP APIs, die Daten im JSON Format austauschten.
-Die Anwendungen wurden im Browser gerendert und die Daten über APIs geladen.
-Dies führte zu einem Push des REST Paradigmas.
+== Die Ära der Single Page Applications (SPA)
+
+Mit der Einführung von AJAX und später Single Page Applications (SPA) änderte sich dies. Anwendungen wurden interaktiver und responsiver. SPAs kommunizieren über HTTP APIs, die Daten im JSON-Format austauschen, wodurch das Frontend im Browser gerendert und die Daten über APIs geladen werden. Dies führte zur Verbreitung des REST-Paradigmas.
 
 .Klassische SPA Architektur
 [plantuml,spa-classic,svg]
@@ -27,27 +21,30 @@ Dies führte zu einem Push des REST Paradigmas.
 include::example$spa-classic.puml[]
 ----
 
-Und aus meiner Sicht führte das zu ein paar Problemen, die erstmal nicht so offensichtlich waren, da alle auf den Zug aufgesprungen sind und es so gemacht haben.
-Es waren auch alle damit beschäftigt, erst einmal die neuen Technologien zu lernen und zu verstehen.
-Es kamen immer mehr SPA Frameworks auf: Angular 1, Angular, React, Vue.js, Svelte, Preact, ember, um nur ein paar zu nennen.
-Außerdem kam neben JavaScript auch TypeScript auf, das die Sprache JavaScript um Typen erweiterte.
-Und das Tooling drumherum war massiv in Bewegung: Webpack, Rollup, Babel, ESLint, Prettier, Jest, Cypress, Storybook, um nur ein paar zu nennen.
+== Herausforderungen und Komplexität von SPAs
+Die Umstellung auf SPAs brachte jedoch einige Herausforderungen mit sich:
 
-Bevor wir uns dem Problem der Netzwerkkommunikation zuwenden, noch einen kleinen Blick in die einzelnen Komponentn .Whitebox SPA
+Komplexität der Netzwerkkommunikation: Daten mussten häufig mehrfach gemappt werden, was fehleranfällig und zeitaufwendig war.
+Overfetching und Underfetching: REST-APIs lieferten oft entweder zu viele oder zu wenige Daten, was zu ineffizientem Datenmanagement führte.
+Fragmentierung der Daten: Durch die Einführung von Microservices wurden Daten auf verschiedene Services verteilt, was die Datenabfrage komplexer machte.
 
+[[whitebox-spa]]
+.Whitebox SPA
 [plantuml,spa-classic-whitebox,svg]
 ----
 include::example$spa-classic-whitebox.puml[]
 ----
 
-Hier sieht man, was häufig passiert, wenn man Daten aus der Datenbank ins UI laden will.
+Die Komplexität liegt auch darin begründet, dass viel "Boilerplate" Code geschrieben wird, um Daten zwischen Datenbank und UI auszutauschen.
+In der in Abbildung <<whitebox-spa>> gezeigten Architektur bedeutet dies:
 
 1. Definition von JPA Entites und *Mapping* zwischen SQL und Java Objekten
-2. Mapping zwischen Java Objekten und JSON
+2. *Mapping* zwischen Java Objekten und JSON
 
-Wir haben hier unter Umständen zwei Mappings drin, die wir pflegen müssen.
-Das ist nicht nur fehleranfällig, sondern auch zeitaufwändig.
-Für bestimmte Use Cases helfen hier Ansätze, wie Spring Data REST weiter, welche zum Teil das Mapping automatisieren, zumindest Richtung REST.
+Wir haben hier ein Objektmodell, ein JSON Modell und Mappings drin, die gepflegt werden müssen.
+Dies ist nicht nur fehleranfällig, sondern auch zeitaufwändig.
+
+Für bestimmte Use Cases helfen Ansätze, wie Spring Data REST weiter, welche zum Teil das Mapping automatisieren, zumindest Richtung REST.
 Dies führt dann wieder zu einem Code First Ansatz für REST Schnittstellen.
 Dies kann in Ordnung sein, wenn es sich um "private" Schnittstellen handelt.
 Leider ist die Trennung zwischen "privaten (BFF)" und öffentlichen Business API Schnittstellen nicht immer so klar.
@@ -55,6 +52,9 @@ Dies führt schnell dazu, dass wir eine "Business API" vorsehen, aber bei einer 
 Ferner sehen wir, dass wir Validierungslogik häufig doppelt implementieren.
 Hier können generierende Ansätze helfen, die aus Java Klassen (Annotationen) entsprechende zod Schemata generieren.
 Mein Kollege ist darauf in seinem Post https://thecattlecrew.net/2024/07/08/validieren-mit-zod-zwischen-frontend-und-backend/[Validieren mit Zod: zwischen Frontend und Backend] eingegangen.
+
+
+== Lösungsansätze: BFF und GraphQL
 
 Aber so langsam wurden auch einige Probleme sichtbar bei der Benutzung von REST.
 Es ist nicht so einfach bei einem REST Architekturstil die Daten so zu laden, wie das Frontend sie für einen bestimmten Use Case benötigt.
@@ -81,6 +81,7 @@ Allerdings wird diese Komplexität für viele Geschäftsanwendungen mit einer ü
 Man würde gerne die Vorteile von Single Page Applications nutzen, aber nicht die Komplexität, die damit einhergeht.
 Die Entwicklung solcher Anwendungen scheint damit zu teuer und zu komplex zu werden.
 
+== Lösungsansatz: Low Code
 Vielleicht ist dies auch eine der Motivatoren für den Trend zu No-Code und Low-Code Plattformen.
 Sie versprechen die Entwicklung solcher Anwendungen drastisch zu vereinfachen zu beschleunigen.
 Aus meiner Sicht aber geht das auf Kosten der Flexibilität und der Kontrolle über die Anwendungen.
@@ -98,6 +99,8 @@ Gleichzeitig benötigt man für die Entwicklung dieser Anwendungen auch noch Ent
 Die Plattformen sind also nicht so einfach zu bedienen, wie es auf den ersten Blick scheint.
 
 Wenn aber an den Verkaufsargumenten für Low Code Plattformen etwas dran ist: Entwicklungsgeschwindigkeit und Entwicklungskosten zu senken, wir aber gleichzeitig keine Kompromisse bei Standard-Technologien und einem relativ un-opinionated Ansatz machen wollen, was gibt es für Alternativen?
+
+== Lösungsansatz: Fullstack Frameworks
 
 Hier kommt Remix ins Spiel.
 Remix ist ein sogenanntes Fullstack Framework, welches auf React und React-Router aufsetzt.
@@ -146,6 +149,8 @@ Einiges davon wird schon durch das Node.js Ökosystem abgedeckt.
 Aber gerade der letzte Punkt ist die Domäne der Fullstack Frameworks.
 Dies wird als Hydration und Dehydration bezeichnet.
 
+== React Ökosystem für Geschäftsanwendungen
+
 Für Geschäftsanwendungen ebenfalls häufig wichtig sind aus meiner Sicht zwei Dinge:
 
 * Mächtige Tabellen
@@ -164,9 +169,11 @@ Stellt sich aber immer noch die Frage, warum wir Remix statt Next.js einsetzen.
 Letzteres ist doch der Platzhirsch im React Umfeld.
 Bei prisimic gibt es einen https://prismic.io/blog/compare-remix-vs-nextjs#should-you-use-remix-or-next[Blogpost], der die beiden Frameworks vergleicht.
 
-Ausschlaggebend war für uns:
+== Motivation für Remix
 
-* Setzt auf React Router auf (d.h. wir können Wissen wiederverwenden, etwa auch für klassische React Projekte)
+Für die Wahl von Remix als Technologie statt des Platzhirsches war:
+
+* Remix setzt auf React Router auf (d.h. wir können Wissen wiederverwenden, etwa auch für klassische React Projekte)
 * Nutzung an Web Standards (Flexiblität für unterschiedliche Einsatzszenarien)
 * Keine ("unnötigen") Extra-Features
 
@@ -174,6 +181,7 @@ Insgesamt bietet Remix genau das, was wir brauchen, um eine Fullstack React Anwe
 D.h. die Lernkurve ist relativ flach und man ist schnell produktiv.
 
 Zum Punkt "unnötigte" Extra Features. Das ist natürlich immer eine Frage des Standpunkts.
+
 Aber einiges, was Next.JS anbietet, wie Static Site Generate oder Incremental Static Regeneration ist für Geschäftsanwendungen weniger wichtig, denn es ist eher fragwürdig Daten zu cachen, die ein Nutzer ändern kann.
 HTTP caching ist für öffentliche Daten, welche durch Back-Office Prozesse aktualisiert werden.
 Da sind wir ganz bei Ryan Florence https://github.com/remix-run/remix/discussions/1228[Standpunkt], einem der Köpfe hinter Remix.
@@ -185,7 +193,7 @@ Was wir aber häufig antreffen, ist eine Aufteilung: Für alle UI relevanten Asp
 Die Integration mit Umsystemen soll ja auch möglichst asynchron erfolgen, ggf. werden sie gecacht.
 Die Beantwortung einer UI Integration sollte dann möglichst innerhalb des eigenen Systems erfolgen.
 
-Daher ist eine Architektur wie folgt anzutreffen:
+Daher sehen wir Remix bei etwas komplexeren Anforderungen nicht alleine, sondern in Kombination mit einem Java Backend.
 
 .Komplexere Remix / Spring Architektur
 [plantuml,complex-remix-spring,svg]
