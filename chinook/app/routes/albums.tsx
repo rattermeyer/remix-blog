@@ -1,74 +1,64 @@
-import { type LoaderFunctionArgs, json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
-import { createSelectSchema } from "drizzle-zod";
-import {
-	type MRT_ColumnDef,
-	MantineReactTable,
-	useMantineReactTable,
-} from "mantine-react-table";
-import { useEffect, useMemo, useState } from "react";
-import type { z } from "zod";
-import { db } from "~/db.server";
-import { album_viewInChinook } from "../../drizzle/schema";
+import {json, type LoaderFunctionArgs, redirect} from "@remix-run/node";
+import {Outlet, useLoaderData, useNavigate} from "@remix-run/react";
+import {createSelectSchema} from "drizzle-zod";
+import {useState} from "react";
+import type {z} from "zod";
+import {db} from "~/db.server";
+import {album_viewInChinook} from "../../drizzle/schema";
+import {Select} from '@mantine/core';
 
 const AlbumViewSchema = createSelectSchema(album_viewInChinook);
 type AlbumView = z.infer<typeof AlbumViewSchema>;
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-	const albums = await db.query.album_viewInChinook.findMany();
-	return json({ albums });
+export const loader = async ({request}: LoaderFunctionArgs) => {
+    const {searchParams} = new URL(request.url);
+    const albums = await db.query.album_viewInChinook.findMany();
+    if (searchParams.has('album')) {
+        return redirect(`/albums/${searchParams.get('album')}/tracks#tracks`);
+    }
+    return json({albums});
 };
 
 export default function Albums() {
-	const [showGlobalFilter, setShowGlobalFilter] = useState<boolean>(false);
-	const [enableGrouping, setEnableGrouping] = useState<boolean>(false);
-	const { albums } = useLoaderData<typeof loader>();
-	const columns = useMemo<MRT_ColumnDef<AlbumView>[]>(
-		() => [
-			{
-				accessorKey: "title",
-				header: "Title",
-				enableGrouping: false,
-			},
-			{
-				accessorKey: "artist",
-				header: "Artist",
-				enableGrouping: true,
-			},
-			{
-				accessorKey: "number_of_tracks",
-				header: "Number of Tracks",
-				enableGrouping: false,
-			},
-			{
-				accessorFn: (album) =>
-					`${Math.floor((album.length_milliseconds || 0) / 1000 / 60)}`,
-				header: "Length in Minutes",
-				enableGrouping: false,
-			},
-		],
-		[],
-	);
-	const table = useMantineReactTable({
-		columns,
-		data: albums,
-		enableGlobalFilter: true,
-		enableGrouping: enableGrouping,
-		state: {
-			showGlobalFilter: showGlobalFilter,
-		},
-	});
-	useEffect(() => {
-		// we need to put this into a useEffect, otherwise React complains about not mounted components
-		// might be because of SSR
-		setShowGlobalFilter(true);
-		setEnableGrouping(true);
-	}, []);
+    const {albums} = useLoaderData<typeof loader>();
+    const navigate = useNavigate();
 
-	return (
-		<>
-			<h1>Albums</h1>
-			<MantineReactTable table={table} />
-		</>
-	);
+    function getAlbum(selectedAlbum: string | null): AlbumView | undefined {
+        return albums.find((album) => album.album_id === parseInt(selectedAlbum || '0'));
+    }
+
+    const groupBy = <T, K extends keyof any>(arr: T[], key: (i: T) => K) =>
+        arr.reduce((groups, item) => {
+            (groups[key(item)] ||= []).push(item);
+            return groups;
+        }, {} as Record<K, T[]>);
+
+    const groupedAlbums = groupBy(albums, a => a.artist || 'Unknown');
+    const comboBoxData = Object.keys(groupedAlbums).map((artist) => ({
+        group: artist,
+        items: groupedAlbums[artist].map((album) => ({
+            label: album.title || 'Unknown',
+            value: String(album.album_id),
+        }))
+    }));
+
+    const [selectedAlbum, setSelectedAlbum] = useState<string | null>(null);
+
+    return (
+        <>
+            <h1>Albums</h1>
+
+            <Select data={[...comboBoxData]} placeholder={"Pick an album"} searchable name={"album"}
+                    value={selectedAlbum}
+                    onChange={(value) => {
+                        setSelectedAlbum(value)
+                        const album = getAlbum(value)
+                        album ? navigate(`/albums/${album?.album_id}/tracks`) : navigate(`/albums`)
+                    }}
+                    label={"Albums"}
+                    clearable
+            />
+            <Outlet/>
+        </>
+    );
 }

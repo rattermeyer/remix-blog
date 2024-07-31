@@ -88,6 +88,7 @@ export default function Customers() {
 						component={Link}
 						to={`/customers/edit/${row.original.customer_id}`}
 						prefetch={"intent"}
+						aria-label={`Edit ${row.original.customer_name}`}
 					>
 						<IconEdit />
 					</ActionIcon>
@@ -95,6 +96,7 @@ export default function Customers() {
 						component={Link}
 						to={`/customers/delete/${row.original.customer_id}`}
 						prefetch={"intent"}
+						aria-label={`Delete ${row.original.customer_name}`}
 					>
 						<IconTrash />
 					</ActionIcon>
@@ -102,6 +104,7 @@ export default function Customers() {
 						component={Link}
 						to={`/invoices?customerId=${row.original.customer_id}`}
 						prefetch={"intent"}
+						aria-label={`View Invoices for ${row.original.customer_name}`}
 					>
 						<IconInvoice />
 					</ActionIcon>

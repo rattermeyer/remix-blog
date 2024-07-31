@@ -1,0 +1,116 @@
+= Remix: Routes und Data Loading
+
+Nachdem wir den Vorteil von Typescript Fullstack Frameworks wie Remix schon in Teil 1 betrachtet haben, wollen wir heute damit anfangen, Remix in Action zu sehen.
+
+Remix lässt sich auf unterschiedliche Arten deployen.
+Es hat keine feste Bindung etwa an Node.JS.
+Alles, was es braucht, ist ein kleiner Adapter.
+Die gibt es als offizielle Varianten vom Remix Team oder auch von der Community.
+
+Wer Remix selbst betreibt, wird wahrscheinlich node.js, deno oder express verwenden.
+Wer Remix auf einem CDN betreibt, kann auch einen Adapter für Cloudflare oder netlify verwenden.
+
+Wir werden Remix mit einem Node.JS Adapter verwenden.
+
+Den Source Code findet ihr auf github unter
+// TODO: add link
+
+Wir verwenden für unser Beispiel eine einfache Datenbank, die https://github.com/lerocha/chinook-database[Chinook Datenbank].
+Die Chinook Datenbank repräsentiert eine Musikverkaufsplattform mit Tabellen für Künstler, Alben, Tracks, Kunden, Bestellungen, ...
+
+Damit wir uns um die Remix-bezogenen Aspekte kümmern können, gibt es mit dem branch `blog-start` einen Startpunkt.
+Dort sind alle Tools und Technologien schon so aufgesetzt, dass wir loslegen können.
+
+Wir wollen eine Seite aufbauen, welche es erlaubt über eine Select-Box ein Album auszuwählen und wir bekommen dann im unteren Bereich die Tracks angezeigt.
+
+.Screenshot Album / Tracks Seite
+image::screenshot-albums.png[]
+
+Die Frage, die wir uns stellen müssen, ist wie wir das auf Remix Routen mappen.
+Generell gibt es dazu mehrere Möglichkeiten:
+
+1. Wir bauen zwei Seiten und zwei Routen `/albums` und `/albums/:albumId/tracks`.
+Dabei müssen wir aber überlegen, wie wir vermeiden, dass die Select Box nicht doppelt genutzt wird
+2. Wir bauen verschachtelte Routen `/albums` und `/albums/:albumId/tracks`.
+Die erste Route stellt das generelle Layout bereit und die zweite Route wird an der entsprechenden Stelle eingebettet.
+
+Wir werden die zweite Version nutzen.
+
+== Layouts und Routen
+
+Der Layout-Code für die `/albums` Route sieht wie folgt aus:
+
+[source,typescript]
+----
+export default function Albums() {
+// einige Zeilen ausgelassen
+// ...
+  return (
+        <>
+            <h1>Albums</h1>
+
+            <Select data={[...comboBoxData]} placeholder={"Pick an album"} searchable name={"album"} <1>
+                    value={selectedAlbum}
+                    onChange={(value) => {
+                        setSelectedAlbum(value)
+                        const album = getAlbum(value)
+                        album ? navigate(`/albums/${album?.album_id}/tracks`) : navigate(`/albums`) <2>
+                    }}
+                    label={"Albums"}
+                    clearable
+            />
+            <Outlet/> <3>
+        </>
+    );
+  }
+----
+
+<1> Wir verwenden eine Select Box, um ein Album auszuwählen
+<2> Wenn ein Album ausgewählt wurde, navigieren wir zur "tracks" Route
+<3> Hier wird die eingebettete Route gerendert, wenn wir eine Album-Subroute ansteuern
+
+und der Layout-Code für die `/albums/:albumId/tracks` Route sieht wie folgt aus.
+Er stellt im Wesentlichen eine Tabelle dar.
+
+[source,typescript]
+----
+export default function Tracks() {
+   // einige Zeilen ausgelassen
+    return <>
+        <h1 id={"tracks"}>{album?.album_title}</h1>
+        <div>{album?.artist_name}</div>
+        <div>{tracks.length} tracks</div>
+        <MantineReactTable table={table}/>
+    </>
+}
+----
+
+Die Konvention ist, dass die Dateien im "routes" Ordner die Routen repräsentieren.
+
+[source]
+----
+src/
+   app/
+        routes/
+             albums.tsx <1>
+             albums.$id.tracks.tsx <2>
+----
+
+<1> Die Album Route
+<2> Die Tracks Route, mit einem dynamischen Segment `$id`, welches die Album ID repräsentiert.
+
+Es gibt eine sehr gute https://interactive-remix-routing-v2.netlify.app/actors/trending[Visualisierung] von Dilum Sanjaya, wie Routen auf dem Dateisystem zu URLs gemappt werden.
+
+Die hier dargestellte Konvention ist die bevorzugte Methode, um Routen in Remix zu definieren.
+Es gibt aber auch andere Möglichkeiten, etwa über Ordner oder eine komplett manuelle Konfiguration.
+
+INFO:: Was man hier sieht ist: ein Punkt `.` im Dateinamen wird zu einem `/` in der URL *und* sorgt für die Verschachtelung (nesting) der Routen.
+
+Da man mit den Dateinamen auch die möglichen URLs definiert, gibt es weitere Möglichkeiten, je nach Anwendungsfall, etwa
+
+* verschachtelte URLs ohne verschachteltes Layout
+* verschachtelte Layouts ohne verschachtelte URLs
+* Optionale URL Segmente
+* Splat Routes, die beliebig viele Segmente aufnehmen können (den Rest der URL)
+
+Die https://remix.run/docs/en/main/file-conventions/routes[Dokumentation] über Routen sollte man sich auf jeden Fall gründlich durchlesen, gerne auch nochmal, wenn man ein paar Seiten gebaut hat.
