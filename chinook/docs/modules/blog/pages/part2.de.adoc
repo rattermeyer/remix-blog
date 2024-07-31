@@ -114,3 +114,21 @@ Da man mit den Dateinamen auch die möglichen URLs definiert, gibt es weitere M�
 * Splat Routes, die beliebig viele Segmente aufnehmen können (den Rest der URL)
 
 Die https://remix.run/docs/en/main/file-conventions/routes[Dokumentation] über Routen sollte man sich auf jeden Fall gründlich durchlesen, gerne auch nochmal, wenn man ein paar Seiten gebaut hat.
+
+== Data Loading
+Nachdem wir die Routen definiert haben, müssen wir uns um das Data Loading kümmern.
+Unsere Routen enthalten aktuell nur den default export.
+
+Die Dateien (Routen), die wir oben erzeugt haben, sind Typescript (ESM) Module.
+Route Module kann verschiedene Exporte haben, die von Remix interpretiert werden.
+
+Zu den typischen Exporten gehören:
+
+* loader
+* action
+* Component (default export)
+* ErrorBoundary
+* headers
+
+Letztere Funktion wird häufig verwendet, um die Cache-Control Header (für öffentliche Routen) zu setzen.
+Details zu den verschiedenen Exporten findet sich unter dem Stichwort https://remix.run/docs/en/main/route/action[Route Module] in der Remix-Dokumentation.

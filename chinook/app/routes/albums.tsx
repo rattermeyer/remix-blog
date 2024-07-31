@@ -1,5 +1,5 @@
 import {json, type LoaderFunctionArgs, redirect} from "@remix-run/node";
-import {Outlet, useLoaderData, useNavigate} from "@remix-run/react";
+import {isRouteErrorResponse, Outlet, useLoaderData, useNavigate, useRouteError} from "@remix-run/react";
 import {createSelectSchema} from "drizzle-zod";
 import {useState} from "react";
 import type {z} from "zod";
@@ -48,17 +48,43 @@ export default function Albums() {
         <>
             <h1>Albums</h1>
 
-            <Select data={[...comboBoxData]} placeholder={"Pick an album"} searchable name={"album"}
-                    value={selectedAlbum}
+            <Select data={[...comboBoxData]} name={"album"} value={selectedAlbum}
+                    placeholder={"Pick an album"} searchable
                     onChange={(value) => {
                         setSelectedAlbum(value)
-                        const album = getAlbum(value)
-                        album ? navigate(`/albums/${album?.album_id}/tracks`) : navigate(`/albums`)
+                        getAlbum(value) ? navigate(`/albums/${getAlbum(value)?.album_id}/tracks`) : navigate(`/albums`)
                     }}
                     label={"Albums"}
+                    nothingFoundMessage={"No albums found..."}
                     clearable
+                    aria-label={"Select Albums"}
             />
             <Outlet/>
         </>
     );
+}
+
+export function ErrorBoundary2() {
+    const error = useRouteError();
+    if (isRouteErrorResponse(error)) {
+        return (
+            <div>
+                <h1>
+                    {error.status} {error.statusText}
+                </h1>
+                <p>{error.data}</p>
+            </div>
+        );
+    } else if (error instanceof Error) {
+        return (
+            <div>
+                <h1>Error from Album-ErrorBoundary</h1>
+                <p>{error.message}</p>
+                <p>The stack trace is:</p>
+                <pre>{error.stack}</pre>
+            </div>
+        );
+    } else {
+        return <h1>Unknown Error</h1>;
+    }
 }

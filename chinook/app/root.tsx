@@ -195,32 +195,25 @@ export function Layout() {
 	);
 }
 
-export default function App() {
+export default function Root() {
 	return <Layout />;
 }
 
 export function ErrorBoundary() {
+	// why this is not rendered automatically, but requires specific handling in Root Component, I don't know
 	const error = useRouteError();
-
-	if (isRouteErrorResponse(error)) {
-		return (
-			<div>
-				<h1>
-					Error {error.status} {error.statusText}
-				</h1>
-				<p>{error.data}</p>
-			</div>
-		);
-	}
-	if (error instanceof Error) {
-		return (
-			<div>
-				<h1>Error</h1>
-				<p>{error.message}</p>
-				<p>The stack trace is:</p>
-				<pre>{error.stack}</pre>
-			</div>
-		);
-	}
-	return <h1>Unknown Error</h1>;
+	console.error(error);
+	return (
+		<html>
+		<head>
+			<title>Oh no!</title>
+			<Meta />
+			<Links />
+		</head>
+		<body>
+		<h1>ErrorBoundary: Root</h1>
+		<Scripts />
+		</body>
+		</html>
+	);
 }
