@@ -1,4 +1,4 @@
-import {json, type LoaderFunctionArgs, redirect} from "@remix-run/node";
+import {json, type LoaderFunctionArgs} from "@remix-run/node";
 import {isRouteErrorResponse, Outlet, useLoaderData, useNavigate, useRouteError} from "@remix-run/react";
 import {createSelectSchema} from "drizzle-zod";
 import {useState} from "react";
@@ -11,11 +11,7 @@ const AlbumViewSchema = createSelectSchema(album_viewInChinook);
 type AlbumView = z.infer<typeof AlbumViewSchema>;
 
 export const loader = async ({request}: LoaderFunctionArgs) => {
-    const {searchParams} = new URL(request.url);
     const albums = await db.query.album_viewInChinook.findMany();
-    if (searchParams.has('album')) {
-        return redirect(`/albums/${searchParams.get('album')}/tracks#tracks`);
-    }
     return json({albums});
 };
 

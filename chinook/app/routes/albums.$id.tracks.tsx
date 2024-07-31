@@ -19,6 +19,7 @@ export const loader = async ({request, params}: LoaderFunctionArgs) => {
         where: eq(album_tracksInChinook.album_id, Number.parseInt(params.id || '0')),
         orderBy: [asc(album_tracksInChinook.track_id)],
     })
+    throw new Error('test')
     return json({tracks, album});
 }
 export default function Tracks() {
