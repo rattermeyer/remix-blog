@@ -1,18 +1,11 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Box, Button, Group, Stack, TextInput } from "@mantine/core";
-import { type ActionFunctionArgs, json, redirect } from "@remix-run/node";
-import {
-	Form,
-	Links,
-	Meta,
-	Scripts,
-	isRouteErrorResponse,
-	useRouteError,
-} from "@remix-run/react";
-import { getValidatedFormData, useRemixForm } from "remix-hook-form";
-import { db } from "~/db.server";
-import { type CustomerCreateForm, customerCreateForm } from "~/models/customer";
-import { customerInChinook } from "../../drizzle/schema";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {Box, Button, Group, Stack, TextInput} from "@mantine/core";
+import {type ActionFunctionArgs, json, redirect} from "@remix-run/node";
+import {Form, isRouteErrorResponse, useRouteError,} from "@remix-run/react";
+import {getValidatedFormData, useRemixForm} from "remix-hook-form";
+import {db} from "~/db.server";
+import {type CustomerCreateForm, customerCreateForm} from "~/models/customer";
+import {customerInChinook} from "../../drizzle/schema";
 
 const resolver = zodResolver(customerCreateForm);
 
@@ -34,6 +27,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 	}
 	return redirect(`/customers/edit/${insertedCustomers[0].customer_id}`);
 };
+
 export default function CustomersCreate() {
 	const {
 		handleSubmit,

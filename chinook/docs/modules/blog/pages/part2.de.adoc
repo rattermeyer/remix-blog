@@ -234,6 +234,7 @@ Es ist also nur ein Teil der Seite betroffen und nicht die gesamte Anwendung.
 
 In der neuesten React Router Version 6.4 gibt es für die data router ebenfalls die Möglichkeit, Error Boundaries zu https://reactrouter.com/en/main/hooks/use-route-error[definieren].
 
+
 == Fazit
 
 Das Laden von Daten, Navigation und Error Boundaries sind die wichtigsten Konzepte.
