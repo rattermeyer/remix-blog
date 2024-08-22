@@ -1,10 +1,9 @@
-import { type LoaderFunctionArgs, json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
-import { eq } from "drizzle-orm";
-import { ClientOnly } from "remix-utils/client-only";
-import { InvoiceTable } from "~/components/InvoiceTable";
-import { db } from "~/db.server";
-import { invoice_viewInChinook } from "../../drizzle/schema";
+import {json, type LoaderFunctionArgs} from "@remix-run/node";
+import {useLoaderData} from "@remix-run/react";
+import {eq} from "drizzle-orm";
+import {InvoiceTable} from "~/components/InvoiceTable";
+import {db} from "~/db.server";
+import {invoice_viewInChinook} from "../../drizzle/schema";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const { searchParams } = new URL(request.url);

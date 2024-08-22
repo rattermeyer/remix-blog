@@ -1,6 +1,6 @@
 import { Form } from "@remix-run/react";
 
-export default function InvoicesCreate() {
+export default function Invoices_Create() {
 	return (
 		<>
 			<h1 id="create">Create Invoice</h1>

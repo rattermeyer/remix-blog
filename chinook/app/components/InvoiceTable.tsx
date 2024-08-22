@@ -1,5 +1,5 @@
 import {Box, Button, NumberFormatter, Text} from "@mantine/core";
-import {useNavigate} from "@remix-run/react";
+import {NavLink, useNavigate} from "@remix-run/react";
 import dayjs from "dayjs";
 import calendar from "dayjs/plugin/calendar";
 import {MantineReactTable, type MRT_ColumnDef, type MRT_TableState, useMantineReactTable,} from "mantine-react-table";
@@ -88,11 +88,7 @@ export const InvoiceTable = ({
         ),
         renderTopToolbarCustomActions: ({table}) => {
             return (
-                <Button
-                    onClick={() => {
-                        navigate("/invoices/create#create");
-                    }}
-                >
+                <Button component={NavLink} to={"/invoices/create#create"}>
                     Create Invoice
                 </Button>
             );
