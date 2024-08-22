@@ -196,7 +196,7 @@ export function Layout() {
 }
 
 export default function Root() {
-	return <Layout />;
+	return <Outlet />;
 }
 
 export function ErrorBoundary() {
