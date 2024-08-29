@@ -138,7 +138,6 @@ export default function CustomersEdit() {
 	}, [notification]);
 	return (
 		<>
-			<h1 id="edit">Edit Customer</h1>
 			<p>This is the page where you can edit a customer.</p>
 			<Box w={{ base: 300, sm: 500, lg: 700 }}>
 				<Form onSubmit={handleSubmit} method={"post"}>

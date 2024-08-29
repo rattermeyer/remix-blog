@@ -47,12 +47,12 @@ Dies ist nicht nur fehleranfällig, sondern auch zeitaufwändig.
 Für bestimmte Use Cases helfen Ansätze, wie Spring Data REST weiter, welche zum Teil das Mapping automatisieren, zumindest Richtung REST.
 Dies führt dann wieder zu einem Code First Ansatz für REST Schnittstellen.
 Dies kann in Ordnung sein, wenn es sich um "private" Schnittstellen handelt.
-Leider ist die Trennung zwischen "privaten (BFF)" und öffentlichen Business API Schnittstellen nicht immer so klar.
+Leider ist die Trennung zwischen "privaten" und öffentlichen Business API Schnittstellen nicht immer so klar.
+Private Schnittstellen sind z.B. von einem BFF (Backend for Frontend) für ein bestimmtes UI optimierten und bereit gestellten Schnittstellen.
 Dies führt schnell dazu, dass wir eine "Business API" vorsehen, aber bei einer spezifischen BFF Schnittstelle landen, die eigentlich privat sein sollte.
 Ferner sehen wir, dass wir Validierungslogik häufig doppelt implementieren.
 Hier können generierende Ansätze helfen, die aus Java Klassen (Annotationen) entsprechende zod Schemata generieren.
 Mein Kollege ist darauf in seinem Post https://thecattlecrew.net/2024/07/08/validieren-mit-zod-zwischen-frontend-und-backend/[Validieren mit Zod: zwischen Frontend und Backend] eingegangen.
-
 
 == Lösungsansätze: BFF und GraphQL
 
@@ -86,7 +86,7 @@ Vielleicht ist dies auch eine der Motivatoren für den Trend zu No-Code und Low-
 Sie versprechen die Entwicklung solcher Anwendungen drastisch zu vereinfachen zu beschleunigen.
 Aus meiner Sicht aber geht das auf Kosten der Flexibilität und der Kontrolle über die Anwendungen.
 Es kommt zu einem starken Vendor Lock in.
-Irgendwie erinnert mich das an die 90er Jahre und das Aufkommen von 4GL Sprachen.
+Irgendwie erinnert mich das an die 90er Jahre und das Aufkommen von https://de.wikipedia.org/wiki/4GL[4GL Sprachen].
 Der Wechsel zu einer anderen Technologie kann schwierig und kostspielig werden.
 Low-Code Plattformen sind sehr "opinionated" in der Art und Weise, wie Software entwickelt wird.
 Sie bieten vorgefertigte Bausteine und Prozesse, welche die Entwicklung beschleunigen können, bei spezifischen Anforderungen aber an Grenzen stoßen können.
@@ -121,8 +121,9 @@ Der generelle Aufbau sieht wie folgt aus
 include::example$remix-whitebox.puml[]
 ----
 
-Im Gegensatz zum ersten Ansatz mit dem Ökosystem-Bruch (JavScript / Java), haben wir hier einen durchgängigen Ansatz.
+Im Gegensatz zum ersten Ansatz mit dem Ökosystem-Bruch (JavaScript / Java), haben wir hier einen durchgängigen Ansatz.
 Wir brauchen keine unnötigen Mappings definieren, da wir direkt JSON aus der Datenbank bekommen.
+// JSON aus der Datenbank? Das ist dann aber über Prisma und hat nichts mit Remix zu tun, richtig?
 Außerdem definieren wir einmal die Validierungslogik für die Daten und können diese sowohl im Frontend als auch im Backend nutzen.
 Remix sorgt als Aufsatz auf "React Router" dafür, dass folgende vier Dinge bereitgestellt werden:
 
@@ -176,6 +177,7 @@ Für die Wahl von Remix als Technologie statt des Platzhirsches war:
 * Remix setzt auf React Router auf (d.h. wir können Wissen wiederverwenden, etwa auch für klassische React Projekte)
 * Nutzung an Web Standards (Flexiblität für unterschiedliche Einsatzszenarien)
 * Keine ("unnötigen") Extra-Features
+* Automatische State Synchronisation zwischen Server und UI, wenn wir für die Manipulation von Daten Actions verwenden
 
 Insgesamt bietet Remix genau das, was wir brauchen, um eine Fullstack React Anwendung zu bauen ohne weiteren Overhead.
 D.h. die Lernkurve ist relativ flach und man ist schnell produktiv.

@@ -61,7 +61,6 @@ export default function CustomerDelete() {
 	const { customer, invoices } = useLoaderData<typeof loader>();
 	return (
 		<div>
-			<h1>Delete Customer</h1>
 			<p>
 				Are you sure you want to delete{" "}
 				<Text fw={700} ta={"center"}>

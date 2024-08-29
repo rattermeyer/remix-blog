@@ -41,7 +41,6 @@ export default function CustomersCreate() {
 
 	return (
 		<>
-			<h1 id="create">Create Customer</h1>
 			<p>This is the page where you can create a new customer.</p>
 			<Box w={{ base: 300, sm: 500, lg: 700 }}>
 				<Form onSubmit={handleSubmit} method={"post"}>

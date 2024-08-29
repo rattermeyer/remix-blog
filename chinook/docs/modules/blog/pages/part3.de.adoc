@@ -1,36 +1,35 @@
 = Formulare, Validierung und Datenänderungen
 
-Daten lesen zu können ist das eine.
-Wir brauchen aber die Möglichkeit, Daten zu erstellen und zu ändern.
-Dazu gibt es Formulare.
-
-Formulare sind in Webanwendungen ein zentrales Element.
+Wir haben im letzten Blog-Post gesehen, wie wir Daten lesen und anzeigen können.
+Gerade für Geschäftsanwendungen ist es aber auch wichtig, Daten zu erstellen und ändern zu können.
+Dazu gibt es im HTML Standard Formulare.
+Remix folgt auch da seiner Philosophie, dass es auf Webstandards aufbaut und diese Formulare als zentrales Element für die Kommunikation von Datenänderungen mit dem Backend nutzt, statt alles auf eine separate REST Kommunikation aufzubauen.
 
 Dazu nehmen wir den Kunden aus der Chinook-Datenbank und erstellen ein Formular, um die Daten zu ändern.
 
 Wir erstellen die Routen (Route Module)
 
-* `customers` für die Übersicht der Kunden
-* `customers_.edit.$id` für die Bearbeitung eines Kunden
-* `customers_.create` für das Anlegen eines neuen Kunden
-
-
-Die URLs sind verschachtelt, aber die https://remix.run/docs/en/main/file-conventions/routes#nested-urls-without-layout-nesting[Layouts nicht].
-Das bedeutet, dass wir für die Bearbeitung und das Anlegen von Kunden jeweils ein eigenes Layout haben.
+// Warum hast du dich gegen eine Index-Route für die Customers-Übersicht entschieden?
+* `customers` als Layout, welche aktuell nur den Header bereitstellt
+* `customers._index` für die Übersicht der Kunden
+* `customers.edit.$id` für die Bearbeitung eines Kunden
+* `customers.create` für das Anlegen eines neuen Kunden
+* `customers.delete` für das Löschen eines Kunden
 
 == Die action Funktion
 
 Die Route Module haben einen weiteren Export, die `action` Funktion.
 Diese wird bei non-GET Anfragen (`DELETE`, `POST`, `PUT`, `PATCH`) aufgerufen, bevor die `loader` Funktion aufgerufen wird.
-Die Loader Funktion wird aufgrufen, um die geänderten Daten zu laden und zu revalidieren.
+Die Loader Funktion wird aufgerufen, um die geänderten Daten zu laden und zu revalidieren.
+Damit wird ein State Abgleich zwischen Server und Client hergestellt.
 
-Remix optimiert in der Regel schon welche Loader Funktionen aufgerufen werden müssen und wann.
+Remix optimiert in der Regel welche Loader Funktionen aufgerufen werden müssen und wann.
 Zusätzlich, falls benötigt, kann dies über die Funktion https://remix.run/docs/en/main/route/should-revalidate[`shouldRevalidate`] gesteuert werden.
 
-Wie die der `loader` ist `action` Teil der öffentlichen API.
+Wie der `loader` ist `action` Teil der öffentlichen API.
 Daten, die wir über die Action Funktion empfangen, müssen wie jede Art von Daten aus dem Web validiert werden.
 
-Und damit kommen wir zu einem der Wesentlichen Aspekte: der Validierung.
+Und damit kommen wir zu einem weiteren wesentlichen Aspekte: der Validierung von Eingabedaten.
 
 == Validierung
 
@@ -47,7 +46,7 @@ Eine Bibliothek, die dies ermöglicht, ist https://zod.dev[`zod`].
 Eine beliebte Library für die Form Validierung in React ist https://react-hook-form.com[`react-hook-form`].
 Diese Bibliothek kann mit `zod` kombiniert werden, um die Validierung auf der Clientseite zu übernehmen.
 
-Für remix gibt es mit https://github.com/forge42dev/remix-hook-form[`remix-hook-form`] eine Integration von `react-hook-form` für Remix.
+Mit https://github.com/forge42dev/remix-hook-form[`remix-hook-form`] gibt es eine für Remix abgestimmte Integration von `react-hook-form`.
 Dieser Adapter ist im Kern keine 300 Zeilen lang.
 
 Andere Vertreter sind
@@ -181,8 +180,10 @@ Dies führt schnell dazu, dass es für eine Select Komponente (hier `customer_.e
 
 Auch wenn der Zugriff auf die Datenbank hier sehr einfach ist, ist es sinnvoll diese Zugriffe aus den Routen herauszunehmen und in eigene Module zu kapseln.
 Das macht die Routen übersichtlicher und erleichtert das Testen und ermöglicht mehr Flexibilität.
-Häufig kommen in der Action Methode noch kleine Logiken hinzu, etwa um weitere Daten zu laden und zu speichern.
+Häufig kommen in der `action` noch kleine Logiken hinzu, etwa um weitere Daten zu laden und zu speichern.
 Dies kommt daher, dass häufig das Formularmodell nicht 1:1 mit dem Datenbankmodell übereinstimmt und noch weitere Daten benötigt werden.
+
+Für unseren Code überlassen wir das Refactoring dem Leser.
 
 == Zusammenfassung
 

@@ -7,8 +7,8 @@ Es hat keine feste Bindung etwa an Node.JS.
 Alles, was es braucht, ist ein kleiner Adapter.
 Die gibt es als offizielle Varianten vom Remix Team oder auch von der Community.
 
-Wer Remix selbst betreibt, wird wahrscheinlich node.js, deno oder express verwenden.
-Wer Remix auf einem CDN betreibt, kann auch einen Adapter für Cloudflare oder netlify verwenden.
+Wer Remix selbst betreibt, wird wahrscheinlich Node.JS, Deno oder Express verwenden.
+Wer Remix auf einem CDN betreibt, kann auch einen Adapter für Cloudflare oder Netlify verwenden.
 
 Wir werden Remix mit einem Node.JS Adapter verwenden.
 
@@ -26,14 +26,13 @@ Wir wollen eine Seite aufbauen, welche es erlaubt über eine Select-Box ein Albu
 .Screenshot Album / Tracks Seite
 image::screenshot-albums.png[]
 
-Die Frage, die wir uns stellen müssen, ist wie wir das auf Remix Routen mappen.
+Die Frage, die wir uns stellen müssen, ist wie wir die Seiten und angezeigte Daten auf Remix Routen mappen.
 Generell gibt es dazu mehrere Möglichkeiten:
 
 1. Wir bauen zwei Seiten und zwei Routen `/albums` und `/albums/:albumId/tracks`.
 Dabei müssen wir aber überlegen, wie wir vermeiden, dass die Select Box nicht doppelt genutzt wird
 2. Wir bauen verschachtelte Routen `/albums` und `/albums/:albumId/tracks`.
 Die erste Route stellt das generelle Layout bereit und die zweite Route wird an der entsprechenden Stelle eingebettet.
-
 Wir werden die zweite Version nutzen.
 
 == Layouts und Routen
